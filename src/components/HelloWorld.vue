@@ -4,7 +4,6 @@
 </template>
 
 <script>
-import { clearInterval } from 'timers';
 export default {
   name: 'HelloWorld',
   props: {
@@ -37,16 +36,31 @@ export default {
   methods: {
     play() {
       let i = 0
-      setInterval(() => {
+      let position = {
+        x: 0,
+        y: 0,
+        loop: 0,
+      }
+      const playTimer = setInterval(() => {
+        i++;
         if(i % this.column) {
-          this.$set(this.style, 'backgroundPosition', `${this.width * i}px 0px`)
+          position.x -= this.width; 
         } else {
-          this.$set(this.style, 'backgroundPosition', `0px ${this.height * i}px`)
+          position.y -= this.height; 
+          position.x = 0;
         }
+
         if (i == this.max) {
           i = 0
+          position.y = 0; 
+          position.x = 0;
+          position.loop++;
+          if(position.loop >= this.loop) {
+            clearInterval(playTimer)
+          }
         }
-        i++;
+        
+        this.$set(this.style, 'backgroundPosition', `${position.x}px ${position.y}px`)
       }, 1000/this.frame);
     }
   }
